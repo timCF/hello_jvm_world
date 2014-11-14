@@ -9,8 +9,12 @@
 (defrecord Position [x y])
 (defrecord GameState [cur_pos, history])
 
+(def printer (agent 0))
+
 (defn generate_new_state [old_state way]
-	(println (count (:history old_state)))
+	(case (rand-int 10000) 
+		1 (send printer (fn [_] (println (count (:history old_state)) (:history old_state) )))
+		:ok)
 	(->	(update-in old_state [:history]
 			(fn [old_history] (conj old_history (:cur_pos old_state))))
 		(update-in [:cur_pos :x]
@@ -19,8 +23,7 @@
 			(fn [y] (+ y (last way))))))
 (defn is_valid_state [limit some_state]
 	(let [x (:x (:cur_pos some_state)) y (:y (:cur_pos some_state))]
-		;(println (and (> x 0) (> y 0) (<= x limit) (>= y limit)))
-		(and (> x 0) (> y 0) (<= x limit) (<= y limit)) ))
+		(and (> x 0) (> y 0) (<= x limit) (<= y limit) (not-any? #(= (:cur_pos some_state) %) (:history some_state)))))
 
 (defun game 
 	([_, []] [])

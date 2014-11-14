@@ -6,4 +6,4 @@
   "I don't do a whole lot ... yet."
   [& args]
   (println "Hello, World!")
-  (hello-jvm-world.horse/init 3 3 5))
+  (println "GOT PATHS : " (count (time (hello-jvm-world.horse/init 3 3 5)) )))

@@ -1,4 +1,6 @@
-(ns hello-jvm-world.permutations)
+(ns hello-jvm-world.permutations
+	(:use [defun :only [defun]])
+	(:require clojure.test))
 
 
 (defn make_permutations_process [inp_set take_num condition res]
@@ -15,11 +17,12 @@
 		0 res
 		(flatten_proc (dec take_num) (apply concat res))))
 
-(defn make_permutations [inp_set take_num condition]
-	(->> 	(make_permutations_process inp_set take_num condition [])
-			(flatten_proc (dec take_num))
-			(filter (fn [el] (not= el :failed)))
-			(vec)))
-
-(defmacro permutations_macro [input_set size_of_perms condition]
-	(make_permutations input_set size_of_perms condition ))
+(defun make_permutations
+	([	(inp_set :guard #(and (not= [] %) (vector? %)))
+		(take_num :guard #(and (integer? %) (> % 0)))
+		(condition :guard clojure.test/function?) ]
+		(case (<= take_num (count inp_set)) true
+			(->> 	(make_permutations_process inp_set take_num condition [])
+					(flatten_proc (dec take_num))
+					(filter (fn [el] (not= el :failed)))
+					(vec)))))
